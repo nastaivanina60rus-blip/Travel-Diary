@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Дневник путешествий</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Playfair+Display:wght@500;600&family=Rubik:wght@800&family=Marck+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="topbar">
+        <nav class="nav nav-left">
+            <button type="button" class="nav-btn active" data-view="listView">поездки</button>
+            <button type="button" class="nav-btn" data-view="addView">добавить поездку</button>
+        </nav>
+        <div class="logo">Дневник путешествий</div>
+        <nav class="nav nav-right">
+            <button type="button" class="nav-btn" data-view="statsView">статистика</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Поездки -->
+        <section id="listView" class="view active">
+            <div class="hero">
+                <div class="hero-text">
+                    <p class="eyebrow">все твои поездки в одном месте</p>
+                    <h1>Дневник путешествий</h1>
+                    <p class="lead">Страны, города, даты, фотографии и впечатления — храни воспоминания и смотри, сколько мест ты уже открыл.</p>
+                    <button type="button" class="pill" data-view="addView">добавить поездку</button>
+                    <svg class="arrow" viewBox="0 0 160 70" aria-hidden="true"><path d="M5 50 C 20 10, 60 5, 55 35 C 50 60, 20 45, 45 25 C 80 0, 120 30, 150 38 M135 25 L152 38 L133 50" fill="none" stroke="#7a1228" stroke-width="2.5" stroke-linecap="round"/></svg>
+                </div>
+            </div>
+
+            <div class="band red">
+                <div class="paper">
+                    <div class="holes"></div>
+                    <p class="eyebrow">куда ты уже добрался</p>
+                    <h2>Мои поездки</h2>
+                    <div id="tripList" class="trip-grid"></div>
+                    <p id="emptyText" class="empty">Пока нет ни одной поездки. Добавь первую!</p>
+                    <button type="button" class="solid" data-view="addView">добавить поездку</button>
+                </div>
+                <div class="summary">
+                    <span id="summary"></span>
+                    <button type="button" class="solid" data-view="statsView">статистика</button>
+                </div>
+            </div>
+
+            <!-- Детальный просмотр -->
+            <div id="detail" class="detail" hidden>
+                <div class="detail-main">
+                    <div class="detail-left">
+                        <p class="eyebrow" id="detailMeta"></p>
+                        <h2 id="detailTitle"></h2>
+                        <p id="detailText" class="impressions"></p>
+                        <div class="burst" id="detailDays"></div>
+                        <div class="actions">
+                            <button type="button" id="deleteTrip" class="solid">удалить</button>
+                            <button type="button" id="closeDetail" class="ghost">закрыть</button>
+                        </div>
+                    </div>
+                    <div class="detail-right">
+                        <div class="frame" id="detailCover"></div>
+                    </div>
+                </div>
+                <div class="detail-more">
+                    <p class="eyebrow">галерея</p>
+                    <div id="gallery" class="gallery"></div>
+                    <p class="eyebrow">карта</p>
+                    <iframe id="map" class="map" title="Карта" loading="lazy"></iframe>
+                </div>
+            </div>
+            <div class="checker"></div>
+        </section>
+
+        <!-- Форма добавления поездки -->
+        <section id="addView" class="view">
+            <div class="band lavender">
+                <div class="card scallop">
+                    <p class="eyebrow pink">новая запись</p>
+                    <h2>Добавить поездку</h2>
+                    <form id="tripForm" novalidate>
+                <div class="row">
+                    <div class="field">
+                        <label for="country">Страна *</label>
+                        <input id="country" name="country" type="text" placeholder="Например: Эстония">
+                        <small class="error" id="countryError"></small>
+                    </div>
+                    <div class="field">
+                        <label for="city">Город *</label>
+                        <input id="city" name="city" type="text" placeholder="Например: Таллин">
+                        <small class="error" id="cityError"></small>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="startDate">Дата начала *</label>
+                        <input id="startDate" name="startDate" type="text" placeholder="ДД-ММ-ГГГГ">
+                        <small class="error" id="startDateError"></small>
+                    </div>
+                    <div class="field">
+                        <label for="endDate">Дата окончания *</label>
+                        <input id="endDate" name="endDate" type="text" placeholder="ДД-ММ-ГГГГ">
+                        <small class="error" id="endDateError"></small>
+                    </div>
+                </div>
+                <p class="duration" id="durationPreview"></p>
+
+                <div class="field">
+                    <label for="photoUrl">Фото (ссылка или файл с компьютера)</label>
+                    <div class="photo-add">
+                            <input id="photoUrl" type="text" placeholder="https://… или file:///Users/…/photo.jpg">
+                            <button type="button" id="addPhoto" class="ghost">добавить ссылку</button>
+                            <button type="button" id="pickFiles" class="solid">с компьютера</button>
+                            <input id="photoFile" type="file" accept="image/*" multiple hidden>
+                        </div>
+                        <small class="error" id="photoError"></small>
+                    <ul id="photoList" class="photo-list"></ul>
+                </div>
+
+                <div class="field">
+                    <label for="impressions">Впечатления *</label>
+                    <textarea id="impressions" name="impressions" rows="5" placeholder="Расскажи, как прошла поездка"></textarea>
+                    <small class="error" id="impressionsError"></small>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="solid">сохранить поездку</button>
+                    <button type="button" id="resetForm" class="ghost">очистить форму</button>
+                </div>
+            </form>
+                </div>
+            </div>
+            <div class="checker"></div>
+        </section>
+
+        <!-- Статистика -->
+        <section id="statsView" class="view">
+            <div class="band red">
+                <div class="paper">
+                    <div class="holes"></div>
+                    <p class="eyebrow">твоя география</p>
+                    <h2>Статистика</h2>
+                    <div class="stats">
+                        <div class="stat s-peach"><span id="statTrips">0</span>поездок</div>
+                        <div class="stat s-burg"><span id="statCountries">0</span>стран</div>
+                        <div class="stat s-pink"><span id="statCities">0</span>городов</div>
+                        <div class="stat s-lav"><span id="statDays">0</span>дней в пути</div>
+                    </div>
+                    <div class="lists">
+                        <div><p class="eyebrow">посещённые страны</p><ul id="countryList"></ul></div>
+                        <div><p class="eyebrow">посещённые города</p><ul id="cityList"></ul></div>
+                    </div>
+                </div>
+            </div>
+            <div class="checker"></div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+    <script src="script.js"></script>
+</body>
+</html>
